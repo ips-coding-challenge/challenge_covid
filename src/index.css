@@ -1,6 +1,9 @@
 /* purgecss start ignore */
 @tailwind base;
 
+.leaflet-container {
+  background-color: black !important;
+}
 @tailwind components;
 /* purgecss end ignore */
 
