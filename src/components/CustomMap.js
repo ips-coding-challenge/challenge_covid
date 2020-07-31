@@ -3,10 +3,10 @@ import { Map, Marker, TileLayer, Popup, CircleMarker } from "react-leaflet";
 import countries from "../countries.json";
 import axios from "axios";
 import { LatLngBounds, latLng } from "leaflet";
-import { store } from "../store";
+import { store, SET_SELECTED_COUNTRY } from "../store";
 
 function CustomMap() {
-  const { state } = useContext(store);
+  const { state, dispatch } = useContext(store);
   const URL = "https://api.covid19api.com/summary";
   const france = countries.filter((c) => c.name === "France");
   const [zoom, setZoom] = useState(1);
