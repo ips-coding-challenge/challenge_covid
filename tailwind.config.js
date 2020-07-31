@@ -1,7 +1,16 @@
 module.exports = {
   theme: {
-    extend: {}
+    extend: {
+      colors: {
+        primary: "#F9FCFF",
+        secondary: "#190F52",
+        logo: "#6236FF",
+      },
+      borderRadius: {
+        xxl: "24px",
+      },
+    },
   },
   variants: {},
-  plugins: []
-}
+  plugins: [],
+};

@@ -1,120 +1,114 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useContext } from "react";
 import { Map, Marker, TileLayer, Popup, CircleMarker } from "react-leaflet";
 import countries from "../countries.json";
 import axios from "axios";
+import { LatLngBounds, latLng } from "leaflet";
+import { store } from "../store";
 
 function CustomMap() {
+  const { state } = useContext(store);
   const URL = "https://api.covid19api.com/summary";
   const france = countries.filter((c) => c.name === "France");
-  const [data, setData] = useState({});
-  const [loading, setLoading] = useState(true);
-  const ONE_DAY = 1000 * 60 * 60 * 24;
+  const [zoom, setZoom] = useState(1);
+  const [center, setCenter] = useState([51.505, -0.09]);
+
   const [maxDeaths, setMaxDeaths] = useState(0);
   const originalTest = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
   const test = "//{s}.tile.stamen.com/toner/{z}/{x}/{y}.png";
   console.log(`France`, france);
 
-  const expired = () => {
-    const expires_in = localStorage.getItem("expires_in");
-    if (!expires_in) return true;
-    return expires_in < Date.now();
-  };
+  useEffect(() => {
+    parseData();
+  }, [state.data]);
 
-  const parseData = (data) => {
+  useEffect(() => {
+    if (state.selectedCountry) {
+      const country = countries.filter(
+        (c) => c.country_code === state.selectedCountry.CountryCode
+      );
+      setCenter(() => country[0].latlng);
+      setZoom(4);
+    }
+  }, [state.selectedCountry]);
+
+  const parseData = () => {
     // Get the country with maxDeaths
-    console.log(`Data`, data);
-    console.log(`In Here`);
-    const maxCountry = data.Countries.reduce((acc, current) => {
-      console.log(`Acc ${acc.TotalDeaths}`);
-      console.log(`current ${current.TotalDeaths}`);
+    console.log(`State.data`, state.data);
+    if (Object.keys(state.data).length === 0) return;
+    // console.log(`Data`, data);
+    // console.log(`In Here`);
+    const maxCountry = state.data.Countries.reduce((acc, current) => {
+      // console.log(`Acc ${acc.TotalDeaths}`);
+      // console.log(`current ${current.TotalDeaths}`);
       return acc.TotalDeaths > current.TotalDeaths ? acc : current;
     });
-    console.log(`MaxDeaths`, maxCountry);
+    console.log(`MaxDeaths`, maxCountry.TotalDeaths);
     setMaxDeaths(maxCountry.TotalDeaths);
     // Calcul the radius based on maxDeaths
   };
 
-  const fetchData = useCallback(async () => {
-    try {
-      console.log(`Expired`, expired());
-      if (expired()) {
-        const response = await axios.get(URL);
-        localStorage.setItem("data", JSON.stringify(response.data));
-        localStorage.setItem("expires_in", Date.now() + ONE_DAY);
-        setData(response.data);
-        console.log("Expired", response.data);
-      } else {
-        if (localStorage.getItem("data")) {
-          console.log(
-            `Load from cache`,
-            JSON.parse(localStorage.getItem("data"))
-          );
-          parseData(JSON.parse(localStorage.getItem("data")));
-          setData(JSON.parse(localStorage.getItem("data")));
-        } else {
-          const response = await axios.get(URL);
-          localStorage.setItem("data", JSON.stringify(response.data));
-          localStorage.setItem("expires_in", Date.now() + ONE_DAY);
-          setData(response.data);
-        }
-      }
-    } catch (e) {
-      console.log(`Error`, e);
-    }
-  }, []);
+  const onZoomChange = (e) => {
+    // console.log(`E`, e.target._zoom);
+    // if (e.target._zoom > 0) {
+    //   setZoom(e.target._zoom);
+    // }
+  };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const clamp = (a, b, c) => {
+    return Math.max(b, Math.min(c, a));
+  };
 
   // const position = [state.lat, state.lng];
   return (
-    <div className="w-full h-full">
-      <Map
-        style={{ height: "100%", width: "100%" }}
-        center={[51.505, -0.09]}
-        zoom={2}
-      >
-        <TileLayer
-          // attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-          url={test}
-        />
-        {data &&
-          data.Countries &&
-          data.Countries.map((c, i) => {
-            const country = countries.filter(
-              (country) => country.country_code === c.CountryCode
-            );
-            console.log(`Radius`, (c.TotalDeaths / maxDeaths) * 50);
-            return (
-              <CircleMarker
-                color="#ffac48"
-                stroke={false}
-                fillColor="#ffac48"
-                fillOpacity={0.75}
-                key={i}
-                radius={(c.TotalDeaths / maxDeaths) * 50}
-                center={country[0].latlng}
-              >
-                <Popup>
-                  <div className="flex flex-col">
-                    <div>{c.Country}</div>
-                    <div>{c.TotalDeaths}</div>
-                  </div>
-                </Popup>
-              </CircleMarker>
-              // <Marker key={i} position={country[0].latlng}>
-              // <Popup>
-              //   <div className="flex flex-col">
-              //     <div>{c.Country}</div>
-              //     <div>{c.TotalDeaths}</div>
-              //   </div>
-              // </Popup>
-              // </Marker>
-            );
-          })}
-      </Map>
-    </div>
+    <Map
+      className="rounded-lg"
+      style={{ height: "100%", width: "100%" }}
+      center={center}
+      zoom={zoom}
+      maxBounds={[latLng(-90, -180), latLng(90, 180)]}
+      // onzoomlevelschange={onZoomChange}
+      onzoomend={onZoomChange}
+    >
+      <TileLayer
+        // attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        url={test}
+      />
+      {state.data &&
+        state.data.Countries &&
+        state.data.Countries.map((c, i) => {
+          const country = countries.filter(
+            (country) => country.country_code === c.CountryCode
+          );
+          // console.log(`Radius`, (c.TotalDeaths / maxDeaths) * 50);
+          // if (i === 88) {
+          //   console.log("Radius", (c.TotalDeaths / maxDeaths) * 50 * zoom);
+          // }
+          const radius = (c.TotalDeaths / maxDeaths) * 80;
+          return (
+            <CircleMarker
+              color="#ffac48"
+              stroke={false}
+              fillColor={
+                state.selectedCountry && state.selectedCountry === c
+                  ? "red"
+                  : "#ffac48"
+              }
+              fillOpacity={0.75}
+              key={i}
+              radius={clamp(radius, (20 * zoom) / 10, 60)}
+              center={country[0].latlng}
+            >
+              <Popup>
+                <div className="flex flex-col">
+                  <div>{i}</div>
+                  <div>{c.Country}</div>
+                  <div>{c.TotalDeaths}</div>
+                </div>
+              </Popup>
+            </CircleMarker>
+          );
+        })}
+    </Map>
   );
 }
 
