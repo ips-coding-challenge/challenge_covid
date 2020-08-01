@@ -2,7 +2,10 @@ import React, { useContext, useEffect, useCallback } from "react";
 import axios from "axios";
 import Sidebar from "./components/Sidebar";
 import Main from "./components/Main";
-import { store, SET_DATA } from "./store";
+import { store, SET_DATA, SET_HISTORICAL } from "./store";
+
+// const SUMMARY_URL = "https://api.covid19api.com/summary";
+const DATA_URL = "https://api.covid19api.com/summary";
 
 function App() {
   // Fetch data
@@ -15,34 +18,31 @@ function App() {
     return expires_in < Date.now();
   };
 
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async (url, key, type) => {
     try {
       console.log(`Expired`, expired());
       if (expired()) {
-        const response = await axios.get(URL);
-        localStorage.setItem("data", JSON.stringify(response.data));
+        const response = await axios.get(url);
+        localStorage.setItem(key, JSON.stringify(response.data));
         localStorage.setItem("expires_in", Date.now() + ONE_DAY);
         // setData(response.data);
-        dispatch({ type: SET_DATA, payload: response.data });
+        dispatch({ type: type, payload: response.data });
         console.log("Expired", response.data);
       } else {
-        if (localStorage.getItem("data")) {
-          console.log(
-            `Load from cache`,
-            JSON.parse(localStorage.getItem("data"))
-          );
-          // parseData(JSON.parse(localStorage.getItem("data")));
-          // setData(JSON.parse(localStorage.getItem("data")));
+        if (localStorage.getItem(key)) {
+          console.log(`Load from cache`, JSON.parse(localStorage.getItem(key)));
+          // parseData(JSON.parse(localStorage.getItem(key)));
+          // setData(JSON.parse(localStorage.getItem(key)));
           dispatch({
-            type: SET_DATA,
-            payload: JSON.parse(localStorage.getItem("data")),
+            type: type,
+            payload: JSON.parse(localStorage.getItem(key)),
           });
         } else {
-          const response = await axios.get(URL);
-          localStorage.setItem("data", JSON.stringify(response.data));
+          const response = await axios.get(url);
+          localStorage.setItem(key, JSON.stringify(response.data));
           localStorage.setItem("expires_in", Date.now() + ONE_DAY);
           // setData(response.data);
-          dispatch({ type: SET_DATA, payload: response.data });
+          dispatch({ type: type, payload: response.data });
         }
       }
     } catch (e) {
@@ -51,12 +51,12 @@ function App() {
   }, []);
 
   useEffect(() => {
-    fetchData();
+    fetchData(DATA_URL, "data", SET_DATA);
   }, []);
 
   return (
-    <div className="flex h-screen w-full bg-secondary">
-      <Sidebar />
+    <div className="flex w-full bg-secondary">
+      {/* <Sidebar /> */}
       <Main />
     </div>
   );

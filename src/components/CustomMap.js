@@ -4,6 +4,7 @@ import countries from "../countries.json";
 import axios from "axios";
 import { LatLngBounds, latLng } from "leaflet";
 import { store, SET_SELECTED_COUNTRY } from "../store";
+import { fetchHistoricalData } from "./helpers";
 
 function CustomMap() {
   const { state, dispatch } = useContext(store);
@@ -62,7 +63,7 @@ function CustomMap() {
   return (
     <Map
       className="rounded-lg"
-      style={{ height: "100%", width: "100%" }}
+      style={{ maxHeight: "350px", height: "300px", width: "100%" }}
       center={center}
       zoom={zoom}
       maxBounds={[latLng(-90, -180), latLng(90, 180)]}
@@ -97,6 +98,10 @@ function CustomMap() {
               key={i}
               radius={clamp(radius, (20 * zoom) / 10, 60)}
               center={country[0].latlng}
+              onclick={() => {
+                dispatch({ type: SET_SELECTED_COUNTRY, payload: c });
+                fetchHistoricalData(dispatch, c);
+              }}
             >
               <Popup>
                 <div className="flex flex-col">

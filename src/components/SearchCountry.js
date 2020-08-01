@@ -1,5 +1,15 @@
 import React, { useContext, useState, useEffect, createRef } from "react";
-import { store, SET_SELECTED_COUNTRY } from "../store";
+import {
+  store,
+  SET_SELECTED_COUNTRY,
+  SET_LOADING_STATS,
+  SET_COUNTRY_STATS,
+} from "../store";
+import format from "date-fns/format";
+import subDays from "date-fns/subDays";
+import formatISO from "date-fns/formatISO";
+import axios from "axios";
+import { fetchHistoricalData } from "./helpers";
 
 const SearchCountry = () => {
   const { state, dispatch } = useContext(store);
@@ -18,6 +28,9 @@ const SearchCountry = () => {
   }, [state.data.Countries]);
 
   const handleClick = (country) => {
+    fetchHistoricalData(dispatch, country);
+    // fetchHistoricalData(country);
+    // I should launch a request to fetch historical Data
     dispatch({ type: SET_SELECTED_COUNTRY, payload: country });
   };
 
@@ -50,7 +63,10 @@ const SearchCountry = () => {
   };
 
   return (
-    <div className="flex flex-col h-full w-2/5 overflow-hidden mr-4">
+    <div
+      style={{ maxHeight: "800px" }}
+      className="flex flex-col mb-6 md:h-full md:w-2/5 overflow-hidden mr-4"
+    >
       <div className="flex items-center h-12 bg-gray-200 rounded-xxl p-4">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -73,7 +89,7 @@ const SearchCountry = () => {
           tabIndex="1"
         />
       </div>
-      <ul className="flex-auto p-4 overflow-y-auto mt-4">
+      <ul className="hidden md:block flex-auto p-4 overflow-y-auto mt-4">
         {state.data &&
           state.data.Countries &&
           filtered.map((country) => (

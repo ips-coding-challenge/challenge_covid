@@ -4,7 +4,30 @@
 .leaflet-container {
   background-color: black !important;
 }
-
+.recharts-cartesian-axis-ticks {
+  font-size: 12px;
+}
+.btn {
+  @apply px-4 py-1 mx-2 text-white rounded-lg;
+}
+.btn-blue {
+  @apply bg-blue-500;
+}
+.btn-blue {
+  @apply bg-blue-700;
+}
+.btn-green {
+  @apply bg-green-500;
+}
+.btn-green:hover {
+  @apply bg-green-700;
+}
+.btn-orange {
+  @apply bg-orange-500;
+}
+.btn-orange:hover {
+  @apply bg-orange-700;
+}
 @tailwind components;
 /* purgecss end ignore */
 

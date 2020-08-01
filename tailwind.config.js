@@ -9,6 +9,15 @@ module.exports = {
       borderRadius: {
         xxl: "24px",
       },
+      minHeight: {
+        content: "800px",
+      },
+      maxHeight: {
+        content: "800px",
+      },
+      maxWidth: {
+        container: "1140px",
+      },
     },
   },
   variants: {},
