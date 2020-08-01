@@ -16,7 +16,7 @@ module.exports = {
         content: "800px",
       },
       maxWidth: {
-        container: "1140px",
+        container: "1400px",
       },
       width: {
         news: "350px",
