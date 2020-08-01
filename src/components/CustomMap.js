@@ -72,7 +72,7 @@ function CustomMap() {
     >
       <TileLayer
         // attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.stamen.com/stoner/{z}/{x}/{y}.png"
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       {state.data &&
         state.data.Countries &&
