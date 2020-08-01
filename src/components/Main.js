@@ -6,8 +6,8 @@ import InfosPanel from "./InfosPanel";
 
 const Main = () => {
   return (
-    <div className="flex flex-col md:flex-row p-2 md:p-8 md:my-4 w-full min-h-screen bg-primary max-w-container mx-auto">
-      <div className="flex flex-col w-full">
+    <div className="flex flex-col lg:flex-row p-2 md:p-4 w-full min-h-screen bg-primary max-w-container mx-auto">
+      <div className="flex flex-col lg:w-8/12">
         <Header />
         <MainStats />
         <MainContent />

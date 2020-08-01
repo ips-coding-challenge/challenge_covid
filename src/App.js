@@ -55,7 +55,7 @@ function App() {
   }, []);
 
   return (
-    <div className="flex w-full bg-secondary">
+    <div className="flex w-full bg-primary">
       {/* <Sidebar /> */}
       <Main />
     </div>

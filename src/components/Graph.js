@@ -23,7 +23,7 @@ const Graph = () => {
       parseStats("Deaths");
       parseData();
       const mainContent = document.getElementById("mainContent");
-      window.scrollTo(0, mainContent.offsetTop, { behavior: "smooth" });
+      // window.scrollTo(0, mainContent.offsetTop, { behavior: "smooth" });
     }
   }, [state]);
 
@@ -74,7 +74,7 @@ const Graph = () => {
           <h2 className="text-xl mt-6 font-bold">
             {state.selectedCountry.Country}
           </h2>
-          <ResponsiveContainer width="95%" height={300}>
+          <ResponsiveContainer width="99%" height={300}>
             <LineChart
               className="text-sm"
               data={data}

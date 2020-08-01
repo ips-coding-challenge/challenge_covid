@@ -4,7 +4,7 @@ import countries from "../countries.json";
 import axios from "axios";
 import { LatLngBounds, latLng } from "leaflet";
 import { store, SET_SELECTED_COUNTRY } from "../store";
-import { fetchHistoricalData } from "./helpers";
+import { fetchHistoricalData, fetchNews } from "./helpers";
 
 function CustomMap() {
   const { state, dispatch } = useContext(store);
@@ -101,11 +101,11 @@ function CustomMap() {
               onclick={() => {
                 dispatch({ type: SET_SELECTED_COUNTRY, payload: c });
                 fetchHistoricalData(dispatch, c);
+                fetchNews(dispatch, c);
               }}
             >
               <Popup>
                 <div className="flex flex-col">
-                  <div>{i}</div>
                   <div>{c.Country}</div>
                   <div>{c.TotalDeaths}</div>
                 </div>

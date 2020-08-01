@@ -18,6 +18,9 @@ module.exports = {
       maxWidth: {
         container: "1140px",
       },
+      width: {
+        news: "350px",
+      },
     },
   },
   variants: {},

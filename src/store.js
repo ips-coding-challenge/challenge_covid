@@ -5,6 +5,8 @@ export const SET_HISTORICAL = "SET_HISTORICAL";
 export const SET_SELECTED_COUNTRY = "SET_SELECTED_COUNTRY";
 export const SET_LOADING_STATS = "SET_LOADING_STATS";
 export const SET_COUNTRY_STATS = "SET_COUNTRY_STATS";
+export const SET_COUNTRY_NEWS = "SET_COUNTRY_NEWS";
+export const SET_LOADING_NEWS = "SET_LOADING_NEWS";
 
 const initialState = {
   data: {},
@@ -12,6 +14,8 @@ const initialState = {
   selectedCountry: null,
   loadingStats: false,
   countryStats: [],
+  countryNews: null,
+  loadingNews: false,
 };
 
 const store = createContext(initialState);
@@ -31,6 +35,10 @@ const StateProvider = ({ children }) => {
         return { ...state, loadingStats: action.payload };
       case SET_COUNTRY_STATS:
         return { ...state, countryStats: action.payload };
+      case SET_COUNTRY_NEWS:
+        return { ...state, countryNews: action.payload };
+      case SET_LOADING_NEWS:
+        return { ...state, loadingNews: action.payload };
       default:
         return state;
     }

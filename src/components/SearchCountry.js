@@ -4,12 +4,13 @@ import {
   SET_SELECTED_COUNTRY,
   SET_LOADING_STATS,
   SET_COUNTRY_STATS,
+  SET_COUNTRY_NEWS,
 } from "../store";
 import format from "date-fns/format";
 import subDays from "date-fns/subDays";
 import formatISO from "date-fns/formatISO";
 import axios from "axios";
-import { fetchHistoricalData } from "./helpers";
+import { fetchHistoricalData, fetchNews } from "./helpers";
 
 const SearchCountry = () => {
   const { state, dispatch } = useContext(store);
@@ -29,6 +30,7 @@ const SearchCountry = () => {
 
   const handleClick = (country) => {
     fetchHistoricalData(dispatch, country);
+    fetchNews(dispatch, country);
     // fetchHistoricalData(country);
     // I should launch a request to fetch historical Data
     dispatch({ type: SET_SELECTED_COUNTRY, payload: country });
@@ -49,6 +51,7 @@ const SearchCountry = () => {
       console.log(`Country `, country);
       if (country) {
         dispatch({ type: SET_SELECTED_COUNTRY, payload: country });
+        fetchNews(dispatch, country);
         return;
       }
 
@@ -57,6 +60,7 @@ const SearchCountry = () => {
       );
       if (c) {
         dispatch({ type: SET_SELECTED_COUNTRY, payload: c });
+        fetchNews(dispatch, c);
       }
       setSearch("");
     }
